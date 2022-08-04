@@ -48,3 +48,6 @@ This function calls the ```getEnergyDensity(double x, double y, double tau)``` f
 ### Flow velocity evolution function at all positions at all times: ```void energyDensity::FVEvolution()```###
 
 This function calls the ```getFlowVelocityX(double x, double y, double tau)``` and the ```getFlowVelocityY(double x, double y, double tau)``` functions and outputs the evolution of flow velocity across the entire grid, where the pair of x and y components of the flow velocity are printed for **all points on the grid for all times.**
+
+## Usage ##
+A source file is needed to create new instances (systems of particles), edit their parameters, add new particles, and output their ED and FV data into .txt files. 
