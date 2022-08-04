@@ -30,7 +30,7 @@ This function computes the EMT at an x, y, and tau value passed to it. The retur
 
 After the EMT was calculated, the ED value can be found by retrieving the first eigenvalue from the EMT. This function returns the ED value at a given x, y, and τ.
 
-### The flow velocity functions ###
+### The flow velocity calculation functions ###
 
 The FV in the x-direction is equal to the second component of the eigenvector and the FV in the y-direction is equal to the third component of the eigenvector. ```pair <double, double> energyDensity::getFlowVelocityXY(double x, double y, double tau)``` retrieves these values and returns both values at the same time as a pair. ```double energyDensity::getFlowVelocityX(double x, double y, double tau)``` calls ```getFlowVelocityXY(double x, double y, double tau)``` and returns the first value in the pair returned from the XY function. The same function, ```getFlowVelocityY(double x, double y, double tau)``` and process exists for the FV's y component.
 
@@ -40,10 +40,12 @@ This function calls the ```getEnergyDensity(double x, double y, double tau)``` f
 
 ### Energy density output function at single position at all times: ```void energyDensity::EDEvolution(double x, double y)``` ###
 
-This function calls the ```getEnergyDensity(double x, double y, double tau)``` function for a ***single point on the grid***, once for each point in time between ```tau0``` and ```tauFinal``` with a step of ```tauStep```.
+This function calls the ```getEnergyDensity(double x, double y, double tau)``` function for a **single point on the grid for all times**, where it is called once for each point in time between ```tau0``` and ```tauFinal``` with a step of ```tauStep```.
 
 ### Energy density output function at all positions at all times: ```void energyDensity::EDEvolution()``` ###
 
-This function calls the ```getEnergyDensity(double x, double y, double tau)``` function for **all points on the grid**, once for each point in time between ```tau0``` and ```tauFinal``` with a step of ```tauStep```
+This function calls the ```getEnergyDensity(double x, double y, double tau)``` function for **all points on the grid for all times**, where it is called once for each point in time between ```tau0``` and ```tauFinal``` with a step of ```tauStep```
 
-### Flow velocity evolution ###
+### Flow velocity evolution function at all positions at all times: ```void energyDensity::FVEvolution()```###
+
+This function calls the ```getFlowVelocityX(double x, double y, double tau)``` and the ```getFlowVelocityY(double x, double y, double tau)``` functions and outputs the evolution of flow velocity across the entire grid, where the pair of x and y components of the flow velocity are printed for **all points on the grid for all times.**
