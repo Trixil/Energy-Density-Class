@@ -20,7 +20,7 @@ The variable τ, the proper time, is the analog of time for the evolution of thi
 
 The size and complexity of the transverse grid on which the system is analyzed needs to be specified. The range of values in the x and y directions respectively are ```double xRange``` multiplied by ```double xScale``` and ```double yRange``` multiplied by ```double yScale```. The The transverse grid always starts at -1 * ```xRange * xScale``` and ends at ```xRange * xScale``` with steps in position differing by ```xScale``` for the x coordinates. The same is true for the y coordinates.
 For instance, suppose ```xRange``` and ```yRange``` are both set to 12 and ```xScale``` and ```yScale``` are both set to 1. The points at the far right start at 12 and the points at the far left end at -12: (12, y), (11, y), (10, y)... (-11, y), (-12, y). This particular example makes for ((xRange * 2) + 1) * ((yRange * 2) + 1)  = ((12 * 2) + 1) * ((12 * 2) + 1) = 625 different points on the grid to be analyzed.
-### Calculations ###
+## Calculations ##
 To calculate the numerous ED and FV values at every τ value and position, the eigenvectors and eigenvalues of the energy-momentum tensor (EMT) need to computed.
 
 ### Energy-momentum tensor calculator function: ```Eigen::MatrixXd getEMTensor(double x, double y, double tau)``` ###
