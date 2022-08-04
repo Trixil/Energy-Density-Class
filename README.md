@@ -10,7 +10,7 @@ A given object (system of partons) requires the following parameters before the 
 
 ### Sigma ###
 
-The standard deviation in the Gaussian distribution part of the energy-momentum tensor
+The standard deviation in the Gaussian distribution that describes the energy density of each parton, ```double sigma```. It is usually set to 1. Found in the calculations for the energy-momentum tensor.
 
 ### τ<sub>0</sub>, τ<sub>f</sub>, τ<sub>step</sub> ###
 
