@@ -23,10 +23,10 @@ For instance, suppose ```xRange``` and ```yRange``` are both set to 12 and ```xS
 ## Calculations ##
 To calculate the numerous ED and FV values at every τ value and position, the eigenvectors and eigenvalues of the energy-momentum tensor (EMT) need to computed.
 
-**```Eigen::MatrixXd getEMTensor(double x, double y, double tau)```**
+**Energy-momentum tensor calculator function: ```Eigen::MatrixXd getEMTensor(double x, double y, double tau)```**
 
 This function computes the EMT at an x, y, and tau value passed to it. The returned matrix is the sum of the EMTs from each parton present in the system since the EMT function's parameters include the x and y values of a single particle, not multiple particles.
-- **```double energyDensity::getEnergyDensity(double x, double y, double tau)```**
+**Energy density calculator function: ```double energyDensity::getEnergyDensity(double x, double y, double tau)```**
 
 After the EMT was calculated, the ED value can be found by retrieving the first eigenvalue from the EMT. This function returns the ED value at a given x, y, and τ.
 
@@ -34,10 +34,16 @@ After the EMT was calculated, the ED value can be found by retrieving the first 
 
 The FV in the x-direction is equal to the second component of the eigenvector and the FV in the y-direction is equal to the third component of the eigenvector. ```pair <double, double> energyDensity::getFlowVelocityXY(double x, double y, double tau)``` retrieves these values and returns both values at the same time as a pair. ```double energyDensity::getFlowVelocityX(double x, double y, double tau)``` calls ```getFlowVelocityXY(double x, double y, double tau)``` and returns the first value in the pair returned from the XY function. The same function, ```getFlowVelocityY(double x, double y, double tau)``` and process exists for the FV's y component.
 
-**```void energyDensity::EDGrid(double tau)```**
+**Energy density output function at single time: ```void energyDensity::EDGrid(double tau)```**
 
 This function calls the ```getEnergyDensity(double x, double y, double tau)``` function for each point on the grid and outputs a .txt file with the ED value for each point, where the x and y values of each point are printed followed by their ED value. Remember that this function prints the ED for every point on the grid at a single point in time.
 
-**```void energyDensity::EDEvolution(double x, double y)```**
+*Energy density output function at single position at all times: ```void energyDensity::EDEvolution(double x, double y)```*
 
-This function calls the ```getEnergyDensity(double x, double y, double tau)``` function for a single point on the grid, once for each point in time between ```tau0``` and ```tauFinal``` with a step of ```tauStep```
+This function calls the ```getEnergyDensity(double x, double y, double tau)``` function for a **single point on the grid**, once for each point in time between ```tau0``` and ```tauFinal``` with a step of ```tauStep```.
+
+**Energy density output function at all positions at all times: ```void energyDensity::EDEvolution()```**
+
+This function calls the ```getEnergyDensity(double x, double y, double tau)``` function for **all points on the grid**, once for each point in time between ```tau0``` and ```tauFinal``` with a step of ```tauStep```
+
+**Flow velocity evolution**
