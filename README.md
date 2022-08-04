@@ -36,7 +36,7 @@ The FV in the x-direction is equal to the second component of the eigenvector an
 
 ### Energy density output function at single time: ```void energyDensity::EDGrid(double tau)``` ###
 
-This function calls the ```getEnergyDensity(double x, double y, double tau)``` function for each point on the grid and outputs a .txt file with the ED value for each point, where the x and y values of each point are printed followed by their ED value. Remember that this function prints the ED for every point on the grid at a single point in time.
+This function calls the ```getEnergyDensity(double x, double y, double tau)``` function for each point on the grid and outputs a .txt file with the ED value for each point, where the x and y values of each point are printed followed by their ED value. Remember that this function prints the ED for **all points on the grid at a single  time.**
 
 ### Energy density output function at single position at all times: ```void energyDensity::EDEvolution(double x, double y)``` ###
 
