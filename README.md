@@ -4,8 +4,10 @@ This class describes the subsequent evolution of the energy density (ED) and flo
 ## Parameters ##
 A given object (system of partons) requires the following parameters before the energy density and flow velocity values can be calculated:
 - **Number of partons and their positions**
+- 
 ```int partNum``` is the integer number of partons in the system and ```vector<pair<double, double>> partPos``` lists the positions of each parton. To add a parton, the user adds a new pair of x and y values to ```partPos```. ```partNum``` is updated by calculating the new size of the vector.
 - **Sigma**
+
 The standard deviation in the Gaussian distribution part of the energy-momentum tensor
 - **τ<sub>0</sub>, τ<sub>f</sub>, τ<sub>step</sub>**
 The variable τ, the proper time, is the analog of time for the evolution of this system. ```double tau0``` is the initial τ from  which the system's evolution begins. ```double tauFinal``` is the final time at which the system's evolution ends, and ```double tauStep``` is the time at which the evolution progresses. The system will be examined at (```tauFinal``` - ```tau0``` - 1) / ```tauStep``` points in time.
