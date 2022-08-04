@@ -62,13 +62,11 @@ Eigen::MatrixXd energyDensity::getEMTensor(double x, double y, double tau)
 
 	for (int point = 0; point < partNum; point++)
 	{
-		/*cout << "---------------------------------" << endl;*/
 		double x0 = partPos[point].first;
 		double y0 = partPos[point].second;
 		double X = ((x - x0) * (tau - tau0)) / (sigma * sigma);
 		double Y = ((y - y0) * (tau - tau0)) / (sigma * sigma);
 		double Z = sqrt((X * X) + (Y * Y));
-		//std::cout << Z << endl;
 		double sin1 = X / (Z + 1e-16);
 		double cos1 = Y / (Z + 1e-16);
 		double sin2 = 2 * sin1 * cos1;
@@ -77,13 +75,7 @@ Eigen::MatrixXd energyDensity::getEMTensor(double x, double y, double tau)
 		double I1 = std::cyl_bessel_i(1, Z);
 		double I2 = std::cyl_bessel_i(2, Z);
 		double ex = exp(((-1 * pow(x - x0, 2)) - pow(y - y0, 2) - pow(tau - tau0, 2)) / (2 * pow(sigma, 2)));
-		/*cout << "tau = " << tau << endl;
-		cout << "x = " << x << ", y = " << y << endl;
-		cout << "X = " << X << ", Y = " << Y << ", Z = " << Z << endl;
-		cout << "x0 = " << x0 << ", y0 = " << y0 << endl;
-		cout << "sin1 = " << sin1 << ", sin2 = " << sin2 << ", cos1 = " << cos1 << ", cos2 = " << cos2 << endl;
-		cout << "I0 = " << I0 << ", I1 = " << I1 << ", I2 = " << I2 << endl;
-		*/
+	
 		A(0, 0) = ex * I0;
 		A(0, 1) = ex * I1 * sin1;
 		A(1, 0) = A(0, 1);
@@ -103,22 +95,14 @@ Eigen::MatrixXd energyDensity::getEMTensor(double x, double y, double tau)
 
 		C = A * B;
 		T = T + C;
-		//cout << "T is " << T << endl;
 	}
 	return T;
 }
 double energyDensity::getEnergyDensity(double x, double y, double tau)
 {
 	Eigen::Matrix<double, 4, 4> D;
-	//cout << "x y tau is " << x << " " << y << " " << tau << endl;
 	D = getEMTensor(x, y, tau);
-	//cout << "D is " << endl << D << endl;
 	Eigen::EigenSolver<Eigen::Matrix<double, 4, 4> > s(D);  // the instance s(A) includes the eigensystem
-	//std::cout << D << std::endl;
-	/*std::cout << "eigenvalues:" << std::endl;
-	std::cout << s.eigenvalues() << std::endl;
-	std::cout << "eigenvectors=" << std::endl;
-	std::cout << s.eigenvectors() << std::endl;*/
 
 	return real(s.eigenvalues()[0]);
 }
@@ -139,53 +123,21 @@ double energyDensity::getFlowVelocityY(double x, double y, double tau)
 }
 void energyDensity::EDGrid(double tau)
 {
-	cout << "tau(40/3) is " << tau*13.333333 << endl;
-	edg.open("energyDensityGrid_" + to_string(int(tau*13.33333)) + ".txt");
+	edg.open("energyDensityGrid_" + to_string(tau) + ".txt");
 	double percent = 0;
-	/*Eigen::Matrix<double, 4, 4> A;
-	Eigen::Matrix<double, 4, 4> B;
-	Eigen::Matrix<double, 4, 4> C;
-	Eigen::Matrix<double, 4, 4> T;
-	B(0, 0) = 1;
-	B(1, 1) = B(2, 2) = B(3, 3) = -1;
-	B(0, 1) = B(0, 2) = B(0, 3) = B(1, 0) = B(1, 2) = B(1, 3) = B(2, 0) = B(2, 1) = B(2, 3) = B(3, 0) = B(3, 1) = B(3, 2) = 0;
-	*/
 	for (double x = -1 * xScale * xRange; x < (xRange + 1) * xScale; x += xScale)
 	{
 		for (double y = -1 * yScale * yRange; y < (yRange + 1) * yScale; y += yScale)
 		{
 			edg << x << " " << y << " " << real(getEnergyDensity(x, y, tau)) << endl;
-			//cout << (percent / 625) * 100 << "% for tau = " << tau << endl;
-			//percent++;
+			cout << (percent / ((((xRange * 2) + 1))*((yRange * 2) + 1))) * 100 << "% for tau = " << tau << endl;
+			percent++;
 		}
 	}
 	edg.close();
 }
 void energyDensity::EDEvolution(double x, double y)
 {
-	/*
-	ede.open("energyDensityEvolution.txt");
-	Eigen::Matrix<double, 4, 4> A;
-	Eigen::Matrix<double, 4, 4> B;
-	Eigen::Matrix<double, 4, 4> C;
-	Eigen::Matrix<double, 4, 4> T;
-	B(0, 0) = 1;
-	B(1, 1) = B(2, 2) = B(3, 3) = -1;
-	B(0, 1) = B(0, 2) = B(0, 3) = B(1, 0) = B(1, 2) = B(1, 3) = B(2, 0) = B(2, 1) = B(2, 3) = B(3, 0) = B(3, 1) = B(3, 2) = 0;
-	for (double x = -1 * xScale * xRange; x < (xRange + 1) * xScale; x += xScale)
-	{
-		for (double y = -1 * yScale * yRange; y < (yRange + 1) * yScale; y += yScale)
-		{
-			ede << "(" << x << ", " << y << ")";
-			for (double tau = tau0; tau <= tauFinal; tau++)
-			{
-				ede << " " << real(getEnergyDensity(x, y, tau));
-			}
-			ede << endl;
-		}
-	}
-	ede.close();
-	*/
 	ede.open("energyDensityEvolution.txt");
 	Eigen::Matrix<double, 4, 4> A;
 	Eigen::Matrix<double, 4, 4> B;
