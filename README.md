@@ -3,7 +3,7 @@ This class describes the subsequent evolution of the energy density (ED) and flo
 ## Parameters ##
 A given object (system of partons) requires the following parameters before the energy density and flow velocity values can be calculated:
 
-*NOTE: This class requires the Eigen C++ library to compute the tensor and its associated eigenvalues and eigenvectors.
+* NOTE: This class requires the Eigen C++ library to compute the tensor and its associated eigenvalues and eigenvectors. *
 
 ### Number of partons and their positions ###
 
