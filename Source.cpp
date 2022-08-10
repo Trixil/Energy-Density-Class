@@ -29,10 +29,14 @@ int main()
 	test.setPart(7, 5);
 
 	test.getParams();
+	cout << "u_mu[2] is " << test.getu_mu(0, 3, 5)[2] << endl;
+	cout << "j_mu[2] is " << test.getj_mu(0, 3, 5)[2] << endl;
+
+	test.FVEvolution();
 	for (double i = 0, percent = 0; i < 30; i+= 0.075, percent++)
 	{
 		test.EDGrid(i);
 		cout << (percent / 400) * 100 << "% for tau = " << i << endl;
 	}
-	test.FVEvolution();
+	//test.FVEvolution();
 }

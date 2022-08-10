@@ -3,6 +3,8 @@
 #include <utility>
 using namespace std;
 
+typedef std::array<double, 4> EnergyFlowVec;
+
 class energyDensity
 {
 private:
@@ -22,6 +24,8 @@ public:
 	void setPart(double xN, double yN);
 	void getParams();
 	Eigen::MatrixXd getEMTensor(double x, double y, double tau);
+	EnergyFlowVec getu_mu(double x, double y, double tau);
+	EnergyFlowVec getj_mu(double x, double y, double tau);
 	double getEnergyDensity(double x, double y, double tau);
 	pair <double, double> getFlowVelocityXY(double x, double y, double tau);
 	double getFlowVelocityX(double x, double y, double tau);

@@ -98,6 +98,25 @@ Eigen::MatrixXd energyDensity::getEMTensor(double x, double y, double tau)
 	}
 	return T;
 }
+EnergyFlowVec energyDensity::getu_mu(double x, double y, double tau)
+{
+	Eigen::Matrix<double, 4, 4> D;
+	D = getEMTensor(x, y, tau);
+	Eigen::EigenSolver<Eigen::Matrix<double, 4, 4> > s(D);
+	EnergyFlowVec u_mu = { real(s.eigenvectors()(0, 0)), real(s.eigenvectors()(1, 0)), real(s.eigenvectors()(2, 0)), real(s.eigenvectors()(3, 0)) };
+	return u_mu;
+}
+
+EnergyFlowVec energyDensity::getj_mu(double x, double y, double tau)
+{
+	Eigen::Matrix<double, 4, 4> D;
+	D = getEMTensor(x, y, tau);
+	Eigen::EigenSolver<Eigen::Matrix<double, 4, 4> > s(D);
+	double eValue = real(s.eigenvalues()[0]);
+	EnergyFlowVec j_mu = { real(s.eigenvectors()(0, 0))*eValue, real(s.eigenvectors()(1, 0))*eValue, real(s.eigenvectors()(2, 0))*eValue, real(s.eigenvectors()(3, 0))*eValue };
+	return j_mu;
+}
+
 double energyDensity::getEnergyDensity(double x, double y, double tau)
 {
 	Eigen::Matrix<double, 4, 4> D;
