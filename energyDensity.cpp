@@ -9,26 +9,26 @@ fstream ede;
 ofstream edg;
 fstream fve;
 
-void energyDensity::setConst(double sig, double tN, double tF, double tS)
+void freeStreaming2D::setConst(double sig, double tN, double tF, double tS)
 {
 	sigma = sig;
 	tau0 = tN;
 	tauFinal = tF;
 	tauStep = tS;
 }
-void energyDensity::setGrid(double xR, double xS, double yR, double yS)
+void freeStreaming2D::setGrid(double xR, double xS, double yR, double yS)
 {
 	xRange = xR;
 	xScale = xS;
 	yRange = yR;
 	yScale = yS;
 }
-void energyDensity::setPart(double xN, double yN)
+void freeStreaming2D::setPart(double xN, double yN)
 {
 	partPos.push_back(make_pair(xN, yN));
 	partNum = partPos.size();
 }
-void energyDensity::getParams()
+void freeStreaming2D::getParams()
 {
 	cout << "sigma = " << sigma << endl;
 	cout << "tau0 = " << tau0 << " and final tau = " << tauFinal << " with a step of " << tauStep << endl;
@@ -43,7 +43,7 @@ void energyDensity::getParams()
 
 }
 
-Eigen::MatrixXd energyDensity::getEMTensor(double x, double y, double tau)
+Eigen::MatrixXd freeStreaming2D::getEMTensor(double x, double y, double tau)
 {
 	Eigen::Matrix<double, 4, 4> A;
 	Eigen::Matrix<double, 4, 4> B;
@@ -98,7 +98,7 @@ Eigen::MatrixXd energyDensity::getEMTensor(double x, double y, double tau)
 	}
 	return T;
 }
-EnergyFlowVec energyDensity::getu_mu(double x, double y, double tau)
+EnergyFlowVec freeStreaming2D::getu_mu(double x, double y, double tau)
 {
 	Eigen::Matrix<double, 4, 4> D;
 	D = getEMTensor(x, y, tau);
@@ -107,7 +107,7 @@ EnergyFlowVec energyDensity::getu_mu(double x, double y, double tau)
 	return u_mu;
 }
 
-EnergyFlowVec energyDensity::getj_mu(double x, double y, double tau)
+EnergyFlowVec freeStreaming2D::getj_mu(double x, double y, double tau)
 {
 	Eigen::Matrix<double, 4, 4> D;
 	D = getEMTensor(x, y, tau);
@@ -117,7 +117,7 @@ EnergyFlowVec energyDensity::getj_mu(double x, double y, double tau)
 	return j_mu;
 }
 
-double energyDensity::getEnergyDensity(double x, double y, double tau)
+double freeStreaming2D::getEnergyDensity(double x, double y, double tau)
 {
 	Eigen::Matrix<double, 4, 4> D;
 	D = getEMTensor(x, y, tau);
@@ -125,22 +125,22 @@ double energyDensity::getEnergyDensity(double x, double y, double tau)
 
 	return real(s.eigenvalues()[0]);
 }
-pair <double, double> energyDensity::getFlowVelocityXY(double x, double y, double tau)
+pair <double, double> freeStreaming2D::getFlowVelocityXY(double x, double y, double tau)
 {
 	Eigen::Matrix<double, 4, 4> T;
 	T = getEMTensor(x, y, tau);
 	Eigen::EigenSolver<Eigen::Matrix<double, 4, 4> > s(T);
 	return pair <double, double> (real(s.eigenvectors()(1, 0)), real(s.eigenvectors()(2, 0)));
 }
-double energyDensity::getFlowVelocityX(double x, double y, double tau)
+double freeStreaming2D::getFlowVelocityX(double x, double y, double tau)
 {
 	return getFlowVelocityXY(x, y, tau).first;
 }
-double energyDensity::getFlowVelocityY(double x, double y, double tau)
+double freeStreaming2D::getFlowVelocityY(double x, double y, double tau)
 {
 	return getFlowVelocityXY(x, y, tau).second;
 }
-void energyDensity::EDGrid(double tau)
+void freeStreaming2D::EDGrid(double tau)
 {
 	edg.open("energyDensityGrid_" + to_string(tau) + ".txt");
 	double percent = 0;
@@ -155,7 +155,7 @@ void energyDensity::EDGrid(double tau)
 	}
 	edg.close();
 }
-void energyDensity::EDEvolution(double x, double y)
+void freeStreaming2D::EDEvolution(double x, double y)
 {
 	ede.open("energyDensityEvolution.txt");
 	Eigen::Matrix<double, 4, 4> A;
@@ -173,7 +173,7 @@ void energyDensity::EDEvolution(double x, double y)
 	ede << endl;
 	ede.close();
 }
-void energyDensity::EDEvolution()
+void freeStreaming2D::EDEvolution()
 {
 	ede.open("energyDensityEvolution.txt");
 	Eigen::Matrix<double, 4, 4> A;
@@ -198,7 +198,7 @@ void energyDensity::EDEvolution()
 	ede << endl;
 	ede.close();
 }
-void energyDensity::FVEvolution()
+void freeStreaming2D::FVEvolution()
 {
 	fve.open("flowVelocityEvolution.txt");
 	for (double x = -1 * xScale * xRange; x < (xRange + 1) * xScale; x += xScale)
@@ -215,7 +215,7 @@ void energyDensity::FVEvolution()
 	}
 	fve.close();
 }
-energyDensity::energyDensity()
+freeStreaming2D::freeStreaming2D()
 {
 	sigma = 1;
 	tau0 = 0;
@@ -224,7 +224,7 @@ energyDensity::energyDensity()
 	xRange = yRange = xScale = yScale = 1;
 	partNum = 0;
 }
-energyDensity::energyDensity(double sig,
+freeStreaming2D::freeStreaming2D(double sig,
 	double tN, double tF, double tS,
 	double xR, double xS, double yR, double yS)
 {

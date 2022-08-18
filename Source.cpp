@@ -10,7 +10,7 @@
 using namespace std;
 int main()
 {
-	energyDensity test;
+	freeStreaming2D test;
 	test.setConst(1, 0, 30, 1);
 	test.setGrid(30, 1, 30, 1);
 	//test.setPart(0, 0);
