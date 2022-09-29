@@ -2,33 +2,35 @@
 #include <iostream>
 #include <fstream>
 #include <utility>
+#include <iomanip>
 #include <string>
 using namespace std;
 
 fstream ede;
 ofstream edg;
-fstream fve;
+ofstream fve;
+ofstream fvs;
 
-void freeStreaming2D::setConst(double sig, double tN, double tF, double tS)
+void energyDensity::setConst(double sig, double tN, double tF, double tS)
 {
 	sigma = sig;
 	tau0 = tN;
 	tauFinal = tF;
 	tauStep = tS;
 }
-void freeStreaming2D::setGrid(double xR, double xS, double yR, double yS)
+void energyDensity::setGrid(double xR, double xS, double yR, double yS)
 {
 	xRange = xR;
 	xScale = xS;
 	yRange = yR;
 	yScale = yS;
 }
-void freeStreaming2D::setPart(double xN, double yN)
+void energyDensity::setPart(double xN, double yN)
 {
 	partPos.push_back(make_pair(xN, yN));
 	partNum = partPos.size();
 }
-void freeStreaming2D::getParams()
+void energyDensity::getParams()
 {
 	cout << "sigma = " << sigma << endl;
 	cout << "tau0 = " << tau0 << " and final tau = " << tauFinal << " with a step of " << tauStep << endl;
@@ -43,7 +45,7 @@ void freeStreaming2D::getParams()
 
 }
 
-Eigen::MatrixXd freeStreaming2D::getEMTensor(double x, double y, double tau)
+Eigen::MatrixXd energyDensity::getEMTensor(double x, double y, double tau)
 {
 	Eigen::Matrix<double, 4, 4> A;
 	Eigen::Matrix<double, 4, 4> B;
@@ -75,39 +77,77 @@ Eigen::MatrixXd freeStreaming2D::getEMTensor(double x, double y, double tau)
 		double I1 = std::cyl_bessel_i(1, Z);
 		double I2 = std::cyl_bessel_i(2, Z);
 		double ex = exp(((-1 * pow(x - x0, 2)) - pow(y - y0, 2) - pow(tau - tau0, 2)) / (2 * pow(sigma, 2)));
-	
-		A(0, 0) = ex * I0;
-		A(0, 1) = ex * I1 * sin1;
-		A(1, 0) = A(0, 1);
-		A(0, 2) = ex * I1 * cos1;
-		A(2, 0) = A(0, 2);
-		A(0, 3) = 0;
-		A(3, 0) = 0;
-		A(1, 3) = 0;
-		A(3, 1) = 0;
-		A(2, 3) = 0;
-		A(3, 2) = 0;
-		A(3, 3) = 0;
-		A(1, 1) = ex * ((I0 * sin1 * sin1) + ((I1 * cos2) / (Z + 1e-16)));
-		A(1, 2) = ex * 0.5 * I2 * sin2;
-		A(2, 1) = A(1, 2);
-		A(2, 2) = ex * ((I0 * cos1 * cos1) - ((I1 * cos2) / (Z + 1e-16)));
+		int width = 14;
 
-		C = A * B;
-		T = T + C;
+		
+		cout << setw(width) << x << setw(width) << "x0" << setw(width) << "y0" << setw(width)
+			<< "X" << setw(width)
+			<< "Y" << setw(width)
+			<< "Z" << setw(width)
+			<< "sin1" << setw(width)
+			<< "cos1" << setw(width)
+			<< "sin2" << setw(width)
+			<< "cos2" << setw(width)
+			<< "I0" << setw(width)
+			<< "I1" << setw(width)
+			<< "I2" << setw(width)
+			<< "ex" << setw(width)
+			<< endl;
+		cout << left << x0 << setw(width) << y0 << setw(width)
+			<< X << setw(width)
+			<< Y << setw(width)
+			<< Z << setw(width)
+			<< sin1 << setw(width)
+			<< cos1 << setw(width)
+			<< sin2 << setw(width)
+			<< cos2 << setw(width)
+			<< I0 << setw(width)
+			<< I1 << setw(width)
+			<< I2 << setw(width)
+			<< ex << setw(width)
+			<< endl << endl;
+			
+		if (Z > 30)
+		{
+			cout << "Z " << Z << " " << y << endl;
+			//exit(0);
+		}
+		else
+		{
+			A(0, 0) = ex * I0;
+			A(0, 1) = ex * I1 * sin1;
+			A(1, 0) = A(0, 1);
+			A(0, 2) = ex * I1 * cos1;
+			A(2, 0) = A(0, 2);
+			A(0, 3) = 0;
+			A(3, 0) = 0;
+			A(1, 3) = 0;
+			A(3, 1) = 0;
+			A(2, 3) = 0;
+			A(3, 2) = 0;
+			A(3, 3) = 0;
+			A(1, 1) = ex * ((I0 * sin1 * sin1) + ((I1 * cos2) / (Z + 1e-16)));
+			A(1, 2) = ex * 0.5 * I2 * sin2;
+			A(2, 1) = A(1, 2);
+			A(2, 2) = ex * ((I0 * cos1 * cos1) - ((I1 * cos2) / (Z + 1e-16)));
+
+			C = A * B;
+			T = T + C;
+		}
 	}
 	return T;
 }
-EnergyFlowVec freeStreaming2D::getu_mu(double x, double y, double tau)
+EnergyFlowVec energyDensity::getu_mu(double x, double y, double tau)
 {
 	Eigen::Matrix<double, 4, 4> D;
 	D = getEMTensor(x, y, tau);
 	Eigen::EigenSolver<Eigen::Matrix<double, 4, 4> > s(D);
+	//cout << s.eigenvectors() << endl;
 	EnergyFlowVec u_mu = { real(s.eigenvectors()(0, 0)), real(s.eigenvectors()(1, 0)), real(s.eigenvectors()(2, 0)), real(s.eigenvectors()(3, 0)) };
 	return u_mu;
 }
 
-EnergyFlowVec freeStreaming2D::getj_mu(double x, double y, double tau)
+EnergyFlowVec energyDensity::getj_mu(double x, double y, double tau)
 {
 	Eigen::Matrix<double, 4, 4> D;
 	D = getEMTensor(x, y, tau);
@@ -117,7 +157,7 @@ EnergyFlowVec freeStreaming2D::getj_mu(double x, double y, double tau)
 	return j_mu;
 }
 
-double freeStreaming2D::getEnergyDensity(double x, double y, double tau)
+double energyDensity::getEnergyDensity(double x, double y, double tau)
 {
 	Eigen::Matrix<double, 4, 4> D;
 	D = getEMTensor(x, y, tau);
@@ -125,22 +165,31 @@ double freeStreaming2D::getEnergyDensity(double x, double y, double tau)
 
 	return real(s.eigenvalues()[0]);
 }
-pair <double, double> freeStreaming2D::getFlowVelocityXY(double x, double y, double tau)
-{
+pair <double, double> energyDensity::getFlowVelocityXY(double x, double y, double tau)
+{	
 	Eigen::Matrix<double, 4, 4> T;
 	T = getEMTensor(x, y, tau);
+	cout << T << endl;
 	Eigen::EigenSolver<Eigen::Matrix<double, 4, 4> > s(T);
-	return pair <double, double> (real(s.eigenvectors()(1, 0)), real(s.eigenvectors()(2, 0)));
+	EnergyFlowVec u_mu = getu_mu(x, y, tau);
+	double u0 = u_mu[0];
+	double tildeufactor = 1 / sqrt(2 * (u0 * u0) - 1);
+	for (int i = 0; i < 4; i++)
+	{
+		u_mu[i] = u_mu[i] * tildeufactor;
+	}
+	cout << "x component = " << u_mu[1] << " y component = " << u_mu[2] << endl;
+	return pair <double, double> ((u_mu[1]/u_mu[0]), (u_mu[2]/u_mu[0]));
 }
-double freeStreaming2D::getFlowVelocityX(double x, double y, double tau)
+double energyDensity::getFlowVelocityX(double x, double y, double tau)
 {
 	return getFlowVelocityXY(x, y, tau).first;
 }
-double freeStreaming2D::getFlowVelocityY(double x, double y, double tau)
+double energyDensity::getFlowVelocityY(double x, double y, double tau)
 {
 	return getFlowVelocityXY(x, y, tau).second;
 }
-void freeStreaming2D::EDGrid(double tau)
+void energyDensity::EDGrid(double tau)
 {
 	edg.open("energyDensityGrid_" + to_string(tau) + ".txt");
 	double percent = 0;
@@ -155,7 +204,7 @@ void freeStreaming2D::EDGrid(double tau)
 	}
 	edg.close();
 }
-void freeStreaming2D::EDEvolution(double x, double y)
+void energyDensity::EDEvolution(double x, double y)
 {
 	ede.open("energyDensityEvolution.txt");
 	Eigen::Matrix<double, 4, 4> A;
@@ -173,7 +222,7 @@ void freeStreaming2D::EDEvolution(double x, double y)
 	ede << endl;
 	ede.close();
 }
-void freeStreaming2D::EDEvolution()
+void energyDensity::EDEvolution()
 {
 	ede.open("energyDensityEvolution.txt");
 	Eigen::Matrix<double, 4, 4> A;
@@ -198,7 +247,7 @@ void freeStreaming2D::EDEvolution()
 	ede << endl;
 	ede.close();
 }
-void freeStreaming2D::FVEvolution()
+void energyDensity::FVEvolution()
 {
 	fve.open("flowVelocityEvolution.txt");
 	for (double x = -1 * xScale * xRange; x < (xRange + 1) * xScale; x += xScale)
@@ -208,14 +257,45 @@ void freeStreaming2D::FVEvolution()
 			fve << "(" << x << ", " << y << ") ";
 			for (int tau = 0; tau < 30; tau++)
 			{
-				fve << "(" << getFlowVelocityX(x, y, tau) << ", " << getFlowVelocityY(x, y, tau) << ") ";
+				pair <double, double> flowPair = getFlowVelocityXY(x, y, tau);
+				fve << tau << " (" << flowPair.first << ", " << flowPair.second << ") ";
 			}
 			fve << endl;
 		}
 	}
 	fve.close();
 }
-freeStreaming2D::freeStreaming2D()
+void energyDensity::U0Evolution()
+{
+	fve.open("U0Evolution.txt");
+	for (double x = -1 * xScale * xRange; x < (xRange + 1) * xScale; x += xScale)
+	{
+		for (double y = -1 * yScale * yRange; y < (yRange + 1) * yScale; y += yScale)
+		{
+			fve << "(" << x << ", " << y << ") ";
+			for (int tau = 0; tau < 30; tau++)
+			{
+				fve << getu_mu(x, y, tau)[0] << " ";
+			}
+			fve << endl;
+		}
+	}
+	fve.close();
+}
+void energyDensity::FVSliceX(double tau, double y)
+{
+	fvs.open("flowVelocity_" + to_string(tau*2) + ".txt");
+	cout << "fvslice ran" << endl;
+	for (double x = 0; x < (xRange + 1) * xScale; x += xScale)
+	{
+		fvs << x << " " <<
+			//y << " " <<
+			getFlowVelocityX(x, y, tau) << " " << getFlowVelocityY(x, y, tau) << endl;
+	}
+	fvs.close();
+
+}
+energyDensity::energyDensity()
 {
 	sigma = 1;
 	tau0 = 0;
@@ -224,7 +304,7 @@ freeStreaming2D::freeStreaming2D()
 	xRange = yRange = xScale = yScale = 1;
 	partNum = 0;
 }
-freeStreaming2D::freeStreaming2D(double sig,
+energyDensity::energyDensity(double sig,
 	double tN, double tF, double tS,
 	double xR, double xS, double yR, double yS)
 {

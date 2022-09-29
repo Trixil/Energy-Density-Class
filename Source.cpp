@@ -10,11 +10,12 @@
 using namespace std;
 int main()
 {
-	freeStreaming2D test;
-	test.setConst(1, 0, 30, 1);
-	test.setGrid(30, 1, 30, 1);
+	energyDensity test;
+	test.setConst(0.2, 0, 2, 0.5);
+	test.setGrid(50, 0.05, 50, 0.05);
 	//test.setPart(0, 0);
-	test.setPart(-8, -7);
+	test.setPart(0,0);
+	/*
 	test.setPart(-11, 6);
 	test.setPart(1, -10);
 	test.setPart(1, -10);
@@ -27,16 +28,17 @@ int main()
 	test.setPart(3, 6);
 	test.setPart(-11, 8);
 	test.setPart(7, 5);
-
+	*/
+	//test.EDGrid(15);
 	test.getParams();
 	cout << "u_mu[2] is " << test.getu_mu(0, 3, 5)[2] << endl;
 	cout << "j_mu[2] is " << test.getj_mu(0, 3, 5)[2] << endl;
-
-	test.FVEvolution();
-	for (double i = 0, percent = 0; i < 30; i+= 0.075, percent++)
+	//test.FVSliceX(0.5, 0);
+	test.FVSliceX(0.5, 0);
+	/*for (double i = 0, percent = 0; i < 30; i+= 0.075, percent++)
 	{
 		test.EDGrid(i);
 		cout << (percent / 400) * 100 << "% for tau = " << i << endl;
-	}
+	}*/
 	//test.FVEvolution();
 }

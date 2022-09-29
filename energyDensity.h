@@ -5,7 +5,7 @@ using namespace std;
 
 typedef std::array<double, 4> EnergyFlowVec;
 
-class freeStreaming2D
+class energyDensity
 {
 private:
 	int partNum;
@@ -33,9 +33,11 @@ public:
 	void EDGrid(double tau);
 	void EDEvolution(double x, double y);
 	void EDEvolution();
+	void FVSliceX(double tau, double y);
+	void U0Evolution();
 	void FVEvolution();
-	freeStreaming2D();
-	freeStreaming2D(double sig,
+	energyDensity();
+	energyDensity(double sig,
 		double tN, double tF, double tS,
 		double xR, double xS, double yR, double yS);
 };
